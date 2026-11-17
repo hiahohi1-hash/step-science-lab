@@ -71,6 +71,7 @@ function resetIdle() {
 function home() {
   clearTimeout(idleTimer);
   pendingRecognition = null; // 기구 인식 도중 처음으로 돌아오면 기록하지 않음
+  lastShot = null;           // 18단계: 확인하지 않은 사진은 버림
   pendingTopic = '';
   const reagentSearch = h('input', { type: 'search', placeholder: '시약 이름이나 카스 번호 (예: 염산, 7647-01-0)', 'aria-label': '시약 직접 찾기' });
   const equipSearch = h('input', { type: 'search', placeholder: '기구 이름 (예: 배양기, 멸균기)', 'aria-label': '기구 직접 찾기' });

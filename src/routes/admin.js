@@ -103,6 +103,22 @@ router.post('/class-map', (req, res) => { const b = req.body || {}; ok(res, RA.s
 router.post('/recognition-settings', (req, res) => { RA.saveRecognitionSettings(getDb(), req.body || {}); ok(res); });
 
 // 인식 정확도 (11-4, 10단계)
+// 18단계: 학습 사진과 모델 다시 학습
+const Training = require('../rules/training');
+router.get('/training', (req, res) => ok(res, Training.overview(getDb(), req.query.lab)));
+router.get('/training/list', (req, res) => ok(res, { files: Training.listSamples(getDb(), req.query.lab, req.query.class) }));
+router.get('/training/file', (req, res) => {
+  const p = Training.samplePath(getDb(), req.query.lab, req.query.class, req.query.file);
+  if (!p) return res.status(404).json({ ok: false, message: '사진이 없어요.' });
+  res.setHeader('Cache-Control', 'private, max-age=3600');
+  res.type('jpg').sendFile(p);
+});
+router.get('/training/set', (req, res) => ok(res, Training.trainingSet(getDb(), req.query.lab)));
+router.post('/training/upload', (req, res) => { const b = req.body || {}; ok(res, Training.uploadSamples(getDb(), b.labId, b.className, b.dataUrls)); });
+router.post('/training/delete', (req, res) => { const b = req.body || {}; ok(res, Training.deleteSamples(getDb(), b.labId, b.className, b.files)); });
+router.post('/model/save', (req, res) => { const b = req.body || {}; ok(res, Training.saveModel(getDb(), b.labId, b)); });
+router.post('/model/rollback', (req, res) => ok(res, Training.rollbackModel(getDb(), (req.body || {}).labId)));
+
 router.get('/accuracy', (req, res) => ok(res, RA.accuracy(getDb(), req.query.version, labFilter(getDb(), req.query.lab))));
 router.get('/accuracy.csv', (req, res) => {
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');

@@ -8,3 +8,4 @@ data/
 certs/
 # 관리자가 올린 기구 사진
 uploads/
+training/

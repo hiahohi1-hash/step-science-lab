@@ -562,9 +562,11 @@ async function tabClassMap() {
   [notEq, th, hold, cand].forEach((el) => { el.addEventListener('focus', () => { editing = true; }); el.addEventListener('blur', () => { editing = false; }); });
 
   const mapTable = table(['분류 이름', '연결할 기구', ''], v.classes.map(row));
+  const train = await trainingCard(lab).catch((err) => errorBox(err)); // 18단계: 학습 사진과 다시 학습
   setContent(
     ...v.warnings.map((w) => errorBox({ message: w.text, hint: w.hint })),
     modelCard,
+    train,
     h('h2', {}, '분류 이름 ↔ 기구 연결'),
     h('p', { class: 'muted small' }, '티처블 머신에서 정한 분류 이름마다, 그 사진에 해당하는 기구를 체크하세요. 같은 종류가 여러 대면 모두 체크하면 인식 뒤 "1번 / 2번"을 고르게 돼요. 체크를 모두 풀고 저장하면 연결이 사라져요.'),
     mapTable,
@@ -811,9 +813,11 @@ async function tabSettings() {
     reservation_priority_minutes: num('reservation_priority_minutes', 1, 120),
     anonymize_after_year: h('input', { type: 'checkbox', id: 'anon' }),
     queue_enabled: h('input', { type: 'checkbox', id: 'queue' }),
+    training_collect: h('input', { type: 'checkbox', id: 'collect' }),
   };
   f.anonymize_after_year.checked = s.anonymize_after_year === '1';
   f.queue_enabled.checked = s.queue_enabled === '1';
+  f.training_collect.checked = s.training_collect === '1';
   Object.values(f).forEach((el) => { el.addEventListener('focus', () => { editing = true; }); el.addEventListener('blur', () => { editing = false; }); });
   const msg = h('div');
 
@@ -831,6 +835,7 @@ async function tabSettings() {
       h('label', {}, '고위험 시약 반납 시각 (기본 오후 6시)'), f.high_risk_return_time,
       h('label', {}, '예약 대기 우선 시간 (분, 기본 10)'), f.reservation_priority_minutes,
       h('label', { for: 'queue' }, f.queue_enabled, '기구 대기 기능 쓰기 (끄면 학생은 지금 누가 쓰는지만 봐요. 끄는 순간 남아 있던 대기는 취소돼요)'),
+      h('label', { for: 'collect' }, f.training_collect, '태블릿에서 확인한 기구 사진(가운데 부분만)을 학습용으로 모으기 (모델 연결 탭에서 다시 학습할 때 씀)'),
       h('label', { for: 'anon' }, f.anonymize_after_year, '1년 지난 기록의 학번·이름 자동으로 지우기'),
       msg, h('button', { class: 'primary', type: 'submit', style: 'margin-top:16px' }, '저장')),
     synonymCard(),

@@ -408,6 +408,7 @@ const EDITABLE = {
   high_risk_return_time: { label: '고위험 시약 반납 시각', check: (v) => /^([01]\d|2[0-3]):[0-5]\d$/.test(v) },
   reservation_priority_minutes: { label: '예약 대기 우선 시간(분)', check: (v) => Number.isInteger(+v) && +v >= 1 && +v <= 120 },
   queue_enabled: { label: '기구 대기 기능 쓰기', check: (v) => v === '0' || v === '1' },
+  training_collect: { label: '확인한 기구 사진을 학습용으로 모으기', check: (v) => v === '0' || v === '1' },
   anonymize_after_year: { label: '1년 지난 기록의 학번·이름 자동 지우기', check: (v) => v === '0' || v === '1' },
 };
 

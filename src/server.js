@@ -36,9 +36,15 @@ app.disable('x-powered-by'); // 어떤 서버 프로그램인지 밖에 알리�
 // 기구 사진 올리기 주소만 3MB 까지, 나머지는 200KB 까지
 const smallJson = express.json({ limit: '200kb' });
 const photoJson = express.json({ limit: '3mb' });
-const PHOTO_UPLOAD = /^\/api\/admin\/equipment\/\d+\/photo$/;
+const PHOTO_UPLOAD = /^\/api\/admin\/(equipment\/\d+\/photo|training\/upload)$/;
+// 18단계: 학습한 모델 저장은 모델 파일(2~5MB)이 커서 10MB 까지
+const modelJson = express.json({ limit: '10mb' });
+const MODEL_SAVE = /^\/api\/admin\/model\/save$/;
 // (로그인한 관리자일 때만 큰 데이터를 받아 줌 → 로그인 안 한 사람이 큰 데이터로 서버를 괴롭히지 못하게)
-app.use((req, res, next) => (PHOTO_UPLOAD.test(req.path) && isLoggedIn(req) ? photoJson : smallJson)(req, res, next));
+app.use((req, res, next) => {
+  const big = isLoggedIn(req) && (MODEL_SAVE.test(req.path) ? modelJson : PHOTO_UPLOAD.test(req.path) ? photoJson : null);
+  return (big || smallJson)(req, res, next);
+});
 
 // 기본 보안 머리말: 다른 사이트가 이 화면을 몰래 틀 안에 넣거나(클릭 속이기), 파일 종류를 착각하게 하는 것을 막음
 app.use((req, res, next) => {
@@ -87,7 +93,7 @@ app.get('/api/health', (req, res) => {
 //      (제외하지 않으면 "소식 받음 → 내 차례 확인 → 또 소식" 이 끝없이 반복됨)
 const READ_ONLY_POSTS = [/^\/reagents\/loans\/mine$/, /^\/equipment\/my-queue$/, /^\/equipment\/\d+\/me$/,
   /^\/admin\/login$/, /^\/admin\/logout$/, /^\/admin\/password$/, /^\/admin\/notifications\/read-all$/,
-  /^\/reagents\/find-by-text$/, /^\/recognition\/log$/, /^\/topics$/];
+  /^\/reagents\/find-by-text$/, /^\/recognition\/log$/, /^\/recognition\/sample$/, /^\/topics$/];
 app.use('/api', (req, res, next) => {
   if (req.method === 'POST' && !READ_ONLY_POSTS.some((re) => re.test(req.path))) {
     res.on('finish', () => { if (res.statusCode < 400) broadcast('change', { reason: '사용자 요청' }); });

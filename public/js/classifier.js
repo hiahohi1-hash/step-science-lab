@@ -9,7 +9,8 @@
 const classifierCache = {};
 
 function loadClassifier(config) {
-  const key = config.modelBase || 'fake:' + Object.keys(config.classes).sort().join(',');
+  // 18단계: 모델을 다시 학습하면 버전이 바뀜 → 버전까지 열쇠에 넣어 새 모델을 다시 불러옴
+  const key = config.modelBase ? config.modelBase + '|' + (config.modelVersion || '') : 'fake:' + Object.keys(config.classes).sort().join(',');
   if (!classifierCache[key]) classifierCache[key] = createClassifier(config).catch((e) => { delete classifierCache[key]; throw e; });
   return classifierCache[key];
 }
@@ -25,8 +26,10 @@ async function createRealClassifier(base) {
   try {
     await loadScript('/lib/tf-1.3.1.min.js');
     await loadScript('/lib/teachablemachine-image-0.8.5.min.js');
-    const model = await window.tmImage.load(base + 'model.json', base + 'metadata.json');
-    const meta = await fetch(base + 'metadata.json').then((r) => r.json()).catch(() => ({}));
+    // ?t= : 다시 학습한 새 모델 파일을 브라우저가 예전 것(캐시)으로 읽지 않게
+    const t = '?t=' + Date.now();
+    const model = await window.tmImage.load(base + 'model.json' + t, base + 'metadata.json' + t);
+    const meta = await fetch(base + 'metadata.json' + t).then((r) => r.json()).catch(() => ({}));
     // 모델 버전: 티처블 머신이 적어 둔 이름 + 만든 시각 (인식 기록에서 모델을 구분하는 데 씀)
     const version = `${meta.modelName || 'model'} ${meta.timeStamp || ''}`.trim().slice(0, 80);
     return {

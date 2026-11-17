@@ -33,6 +33,7 @@ function recognitionConfig(db, labId = null) {
     holdSeconds: getNumber(db, 'recognition_hold_seconds'),
     candidateSeconds: getNumber(db, 'recognition_candidate_seconds'),
     notEquipmentClass: getSetting(db, 'not_equipment_class'),
+    collectSamples: getSetting(db, 'training_collect') === '1', // 18단계: 확인한 사진을 학습용으로 보낼지
     classes, // { autoclave: [{ id, displayName, … }], incubator: [ 1번, 2번 ] … }
   };
 }

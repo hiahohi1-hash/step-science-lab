@@ -5,16 +5,31 @@
 //   ① 시약 바코드가 보이면 → 시약 흐름 (바코드가 기구 인식보다 먼저)
 //   ② 바코드가 없으면 → 기구 사진 인식 (판정 규칙은 recognition-core.js)
 // "라벨 글자 읽기" 버튼 → 사진 한 장의 글자를 읽어 카스 번호로 시약 찾기
-// ※ 사진은 서버로 보내지 않습니다. 모두 태블릿 안에서 처리합니다.
+// ※ 인식은 모두 태블릿 안에서 처리합니다.
+// ※ 18단계: 사용자가 "예" 또는 다른 기구로 확인했을 때만, 인식에 쓴 사진의 가운데 224×224 부분을
+//    학습용으로 서버에 보냅니다 (관리자 설정에서 끌 수 있음, 학번·이름은 함께 보내지 않음).
 
 const SCAN_INTERVAL_MS = 250;
 let recConfig = null;            // 서버의 인식 설정 + 연결 표
 let pendingRecognition = null;   // 사용자가 기구를 최종 확인하면 기록할 인식 결과
+let lastShot = null;             // 18단계: 인식이 끝난 순간의 사진 (확인되면 학습용으로 보냄)
+
+// 사진의 가운데 정사각형을 224×224 로 잘라 JPEG 로 (모델이 보는 부분과 같음)
+function centerShot(source) {
+  const w = source.width, hgt = source.height, s = Math.min(w, hgt);
+  if (!s) return null;
+  const c = document.createElement('canvas');
+  c.width = c.height = 224;
+  c.getContext('2d').drawImage(source, (w - s) / 2, (hgt - s) / 2, s, s, 0, 0, 224, 224);
+  return c.toDataURL('image/jpeg', 0.85);
+}
 
 async function openScanner() {
   const video = h('video', { class: 'scan-video', playsinline: true, muted: true, autoplay: true });
   const status = h('div', { class: 'scan-status' }, '카메라를 켜는 중…');
   const msg = h('div');
+  const collectNote = h('p', { class: 'muted small center' });
+  lastShot = null;
   const practiceBox = h('div');
   const canvas = document.createElement('canvas');
   let stream = null;
@@ -29,6 +44,7 @@ async function openScanner() {
     h('div', { class: 'scan-box' }, video, h('div', { class: 'scan-frame' })),
     status,
     h('p', { class: 'muted center' }, '시약 바코드나 기구 전체가 화면에 들어오게 비춰 주세요.'),
+    collectNote,
     msg,
     h('div', { class: 'row' },
       h('button', { onclick: () => readLabel(video, stream, msg, () => { stop(); }) }, '🔤 라벨 글자 읽기'),
@@ -53,6 +69,9 @@ async function openScanner() {
     });
     if (classifier.reset) classifier.reset();
     if (classifier.panel) practiceBox.replaceChildren(classifier.panel);
+    if (recConfig.collectSamples && classifier.kind === 'real') {
+      collectNote.textContent = '📸 기구가 맞는지 확인한 사진(가운데 부분만)은 인식을 더 잘하도록 학습에 쓰여요. 이름·학번은 함께 저장되지 않아요.';
+    }
   } catch (err) {
     status.textContent = '';
     msg.replaceChildren(errorBox(err));
@@ -95,6 +114,10 @@ async function openScanner() {
       if (classifier.kind === 'fake' || hasVideo) {
         const predictions = await classifier.predict(hasVideo ? canvas : null);
         const r = judge.update(predictions, performance.now());
+        if (r.type === 'decided' || r.type === 'candidates') {
+          // 18단계: 판정한 순간의 사진을 잠깐 들고 있음 (사용자가 기구를 확인하면 학습용으로 보냄)
+          lastShot = hasVideo && classifier.kind === 'real' && recConfig.collectSamples ? centerShot(canvas) : null;
+        }
         if (r.type === 'decided') { stop(); return confirmRecognized(r, classifier.version); }
         if (r.type === 'candidates') { stop(); return showCandidates(r, classifier.version); }
         if (r.type === 'watching') status.textContent = `인식 중… ${nameOfClass(r.className)} ${Math.round(r.probability * 100)}%`;
@@ -231,4 +254,9 @@ function logRecognitionIfAny(equipmentId) {
   const data = { ...pendingRecognition, confirmedEquipmentId: equipmentId };
   pendingRecognition = null;
   api('/api/recognition/log', data).catch(() => { /* 기록 실패는 학생 흐름을 막지 않음 */ });
+  // 18단계: 확인된 사진을 "최종 확인한 기구"의 학습 사진으로 보냄
+  if (lastShot) {
+    api('/api/recognition/sample', { equipmentId, dataUrl: lastShot }).catch(() => { /* 실패해도 학생 흐름은 계속 */ });
+    lastShot = null;
+  }
 }

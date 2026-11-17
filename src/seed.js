@@ -200,6 +200,7 @@ const DEFAULT_SETTINGS = {
   reservation_priority_minutes: '10', // 예약 대기 우선 시간
   ending_soon_minutes: '10',          // "곧 사용 가능" 표시 시점
   just_finished_notice_minutes: '30', // "방금 사용이 끝났습니다" 안내 시간
+  training_collect: '1',              // 18단계: 태블릿에서 확인한 기구 사진을 학습용으로 모을지 (1: 모음, 0: 안 모음)
   queue_enabled: '0',                 // 기구 대기 기능 (0: 끔 — 지금 누가 쓰는지만 보여 줌, 1: 켬) — 학교 의견으로 기본 끔
   anonymize_after_year: '0',          // 1년 지난 기록 학번·이름 지우기 (0: 끔, 1: 켬)
   not_equipment_class: 'not_equipment', // "기구 아님" 분류 이름 (11-3)
