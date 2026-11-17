@@ -1,0 +1,25 @@
+{
+  "name": "science-lab-manager",
+  "version": "0.1.0",
+  "description": "과학실 통합 관리 웹 앱 (시약 반출 + 실험 기구 사용 현황)",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test \"test/*.test.js\"",
+    "db:show": "node src/scripts/show-db.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@tesseract.js-data/eng": "^1.0.0",
+    "@zxing/browser": "^0.2.1",
+    "@zxing/library": "^0.23.0",
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.3.0",
+    "node-cron": "^4.6.0",
+    "selfsigned": "^5.5.0",
+    "tesseract.js": "^7.0.0"
+  }
+}

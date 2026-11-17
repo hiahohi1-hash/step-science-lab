@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>기구 현황판</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="status-page">
+  <main>
+    <div class="top-nav">
+      <h1 style="margin:0;text-align:left">🔬 기구 현황판</h1>
+      <span id="conn" class="muted">연결 중…</span>
+    </div>
+    <p class="muted" id="updated"></p>
+
+    <!-- 실험실 탭 (13단계) -->
+    <nav id="lab-tabs" class="lab-tabs"></nav>
+
+    <!-- 내 차례 알림 받기 (7-5) -->
+    <section class="card" id="my-box"></section>
+
+    <!-- 기구 카드들 -->
+    <section id="cards" class="status-grid"></section>
+
+    <p class="center muted" style="margin-top:32px"><a href="/">← 처음 화면</a></p>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/sound.js"></script>
+  <script src="/js/live.js"></script>
+  <script src="/js/status.js"></script>
+</body>
+</html>

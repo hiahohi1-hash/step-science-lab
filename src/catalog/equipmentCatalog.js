@@ -1,0 +1,141 @@
+// ─────────────────────────────────────────────
+// 기자재 자료집 (고등학교 생명과학·화학·물리 실험에서 자주 쓰는 기자재와 실험 주제)
+// ─────────────────────────────────────────────
+// - 관리자 화면 "기자재 자료집" 탭에서 우리 학교에 있는 것만 골라 실험실에 넣습니다.
+// - 넣으면 "추천하는 도구"가 이 키워드로 기구를 찾아 줍니다.
+// - 인터넷 자료(아래 SOURCES)를 참고해 "어떤 기자재가 어떤 실험에 쓰이는지"만 정리했습니다.
+//   문장을 옮겨 온 것이 아니라 키워드로 다시 적었습니다.
+// ⚠ 예시 자료입니다. 학교 교육과정·교과서에 맞게 선생님이 검토해 주세요.
+//
+// lab: 넣을 실험실의 영어 코드 (bio 생물실 / chem 화학실 / phys 물리실)
+// kind: '예약'(여럿이 나눠 쓰는 큰 장비 — 사용 등록·지금 누가 쓰는지) 또는 '안내'(사용법만 보여 주는 기자재)
+// src: 참고한 자료 번호 (SOURCES 의 번호). 비어 있으면 검색 자료로 직접 확인하지 못한 일반 지식 → 꼭 확인 필요
+
+const SOURCES = [
+  { id: 1, title: '과학실험 안전매뉴얼 (고등학교) — 사이언스올 (참고용: 파일이 커서 이번에 전체를 읽지는 못함)', url: 'https://www.scienceall.com/wp-content/uploads/2021/03/과학실험안전매뉴얼_고등학교_인쇄용.pdf' },
+  { id: 2, title: 'pH 측정 및 산·염기 적정 — 부산대 일반화학실험', url: 'https://chemistrylab.pusan.ac.kr/sites/chemistrylab/download/5.pH측정 및 산염기 적정.pdf' },
+  { id: 3, title: '유리 기구 사용 — 부산대 일반화학실험', url: 'https://chemistrylab.pusan.ac.kr/sites/chemistrylab/download/exp 1 유리.pdf' },
+  { id: 4, title: '고교 중화 적정 실험 방법 비교 연구 — 한국과학교육학회지', url: 'https://koreascience.kr/article/JAKO201109649112095.pdf' },
+  { id: 5, title: '역학 실험(뉴턴 제2법칙 등) — POSTECH 교육 실험 자료', url: 'https://pheng.postech.ac.kr/data/file/edulab/1_05.pdf' },
+  { id: 6, title: '마찰력 실험 — 서울시립대 물리 실험', url: 'https://file.uos.ac.kr/upload/clacds/1-3.마찰력실험(최종)_240403.pdf' },
+  { id: 7, title: '일반물리실험 (렌즈 초점 거리 등) — 울산대', url: 'https://gifted.ulsan.ac.kr/boardDownload.do?no=328560' },
+  { id: 8, title: '실험 기구 및 재료 (직류 전원·멀티미터) — 부산대 일반물리실험', url: 'https://gplab.pusan.ac.kr/gplab/44351/subview.do' },
+  { id: 9, title: '고교 반응 속도 실험 기구 분석 — 한국과학교육학회', url: 'https://koreascience.kr/article/JAKO200802727390947.pdf' },
+  { id: 10, title: '세포·체세포 분열 관찰 실험 — 한국과학교육 관련 논문', url: 'https://koreascience.kr/article/JAKO201129561845320.pdf' },
+];
+
+const W = '⚠ 사용법을 아직 적지 않았어요. 학교 기구 설명서를 보고 선생님이 "기구 관리"에서 적어 주세요.';
+
+const ITEMS = [
+  // ───────── 생명과학 (생물실) ─────────
+  { id: 'bio-microscope', lab: 'bio', kind: '안내', name: '광학 현미경', src: [10],
+    keywords: ['세포 관찰', '체세포 분열', '양파 뿌리 끝', '삼투 현상', '원생생물', '기공 관찰', '프레파라트', '현미경 관찰'] },
+  { id: 'bio-stereo', lab: 'bio', kind: '안내', name: '해부 현미경', src: [],
+    keywords: ['꽃의 구조', '곤충 관찰', '잎 표면', '해부', '작은 생물 관찰'] },
+  { id: 'bio-slide', lab: 'bio', kind: '안내', name: '슬라이드 글라스·커버 글라스', src: [10],
+    keywords: ['프레파라트', '현미경 관찰', '세포 관찰', '체세포 분열', '염색'] },
+  { id: 'bio-electrophoresis', lab: 'bio', kind: '예약', name: '전기 영동 장치', src: [],
+    keywords: ['DNA 전기 영동', 'DNA 지문', '제한 효소', 'PCR 산물 확인', '유전자 분석'] },
+  { id: 'bio-pcr', lab: 'bio', kind: '예약', name: 'PCR 기기(유전자 증폭기)', src: [],
+    keywords: ['PCR', '유전자 증폭', 'DNA 증폭', '유전자 분석'] },
+  { id: 'bio-waterbath', lab: 'bio', kind: '예약', name: '항온 수조', src: [9],
+    keywords: ['효소 반응', '온도에 따른 효소 활성', '카탈레이스', '물중탕', '아밀레이스'] },
+  { id: 'bio-spectro', lab: 'bio', kind: '예약', name: '분광광도계', src: [],
+    keywords: ['흡광도', '엽록소', '광합성 색소', '농도 측정', '효소 반응 정량'] },
+  { id: 'bio-testtube', lab: 'bio', kind: '안내', name: '시험관·시험관대', src: [],
+    keywords: ['효소 반응', '카탈레이스', '과산화수소 분해', '녹말 검출', '아이오딘 반응'] },
+  { id: 'bio-petri', lab: 'bio', kind: '안내', name: '페트리 접시', src: [],
+    keywords: ['미생물 배양', '세균', '곰팡이', '배지', '항생제 감수성', '유산균'] },
+  { id: 'bio-loop', lab: 'bio', kind: '안내', name: '백금이(접종 루프)', src: [],
+    keywords: ['미생물 접종', '세균', '획선 도말', '무균 조작'] },
+  { id: 'bio-lamp', lab: 'bio', kind: '안내', name: '알코올램프', src: [],
+    keywords: ['무균 조작', '백금이 소독', '가열'] },
+  { id: 'bio-chroma', lab: 'bio', kind: '안내', name: '크로마토그래피 용지·전개 용기', src: [],
+    keywords: ['광합성 색소 분리', '엽록소', '종이 크로마토그래피', '색소 분리'] },
+  { id: 'bio-o2sensor', lab: 'bio', kind: '안내', name: '산소·이산화 탄소 센서', src: [],
+    keywords: ['광합성', '호흡', '광합성 속도', '세포 호흡', '빛의 세기'] },
+
+  // ───────── 화학 (화학실) ─────────
+  { id: 'chem-hood', lab: 'chem', kind: '예약', name: '흄 후드', src: [9],
+    keywords: ['기체 발생', '염소 기체', '암모니아', '휘발성 시약', '유독 기체', '산 희석'] },
+  { id: 'chem-burette', lab: 'chem', kind: '안내', name: '뷰렛', src: [2, 3, 4],
+    keywords: ['중화 적정', '산 염기 적정', '적정', '농도 결정', '표준 용액'] },
+  { id: 'chem-pipette', lab: 'chem', kind: '안내', name: '피펫·피펫 필러', src: [2, 3],
+    keywords: ['정량', '용액 옮기기', '중화 적정', '희석', '부피 측정'] },
+  { id: 'chem-volflask', lab: 'chem', kind: '안내', name: '부피 플라스크', src: [2, 3],
+    keywords: ['표준 용액', '몰 농도', '용액 만들기', '희석'] },
+  { id: 'chem-cylinder', lab: 'chem', kind: '안내', name: '메스실린더', src: [3],
+    keywords: ['부피 측정', '밀도', '기체 부피'] },
+  { id: 'chem-erlen', lab: 'chem', kind: '안내', name: '삼각 플라스크', src: [2],
+    keywords: ['중화 적정', '기체 발생', '반응 속도'] },
+  { id: 'chem-beaker', lab: 'chem', kind: '안내', name: '비커', src: [2, 3],
+    keywords: ['용액 혼합', '용해', '가열', '앙금 생성'] },
+  { id: 'chem-balance', lab: 'chem', kind: '안내', name: '전자저울', src: [3],
+    keywords: ['질량 측정', '몰', '화학 반응의 양적 관계', '밀도', '질량 보존'] },
+  { id: 'chem-ph', lab: 'chem', kind: '안내', name: 'pH 미터', src: [2, 4],
+    keywords: ['pH 측정', '산 염기', '중화', '수질', '지시약'] },
+  { id: 'chem-conduct', lab: 'chem', kind: '안내', name: '전기 전도도 측정기', src: [4],
+    keywords: ['전기 전도도', '중화 적정', '이온', '전해질'] },
+  { id: 'chem-hotplate', lab: 'chem', kind: '안내', name: '핫플레이트 교반기', src: [],
+    keywords: ['가열', '용해', '용해도', '재결정', '저어 주기'] },
+  { id: 'chem-burner', lab: 'chem', kind: '안내', name: '가스 버너', src: [],
+    keywords: ['가열', '불꽃 반응', '금속 원소', '연소'] },
+  { id: 'chem-flamewire', lab: 'chem', kind: '안내', name: '니크롬선(불꽃 반응용)', src: [],
+    keywords: ['불꽃 반응', '금속 이온', '선 스펙트럼', '원소 확인'] },
+  { id: 'chem-electrolysis', lab: 'chem', kind: '안내', name: '전기 분해 장치', src: [],
+    keywords: ['물의 전기 분해', '전기 분해', '산화 환원', '수소 산소 발생', '전기 도금'] },
+  { id: 'chem-gasgen', lab: 'chem', kind: '안내', name: '기체 발생·수상 치환 장치', src: [9],
+    keywords: ['기체 발생', '수상 치환', '이산화 탄소 발생', '산소 발생', '반응 속도'] },
+  { id: 'chem-syringe', lab: 'chem', kind: '안내', name: '기체 주사기', src: [9],
+    keywords: ['반응 속도', '기체 부피 측정', '농도와 반응 속도'] },
+  { id: 'chem-spectroscope', lab: 'chem', kind: '안내', name: '분광기', src: [],
+    keywords: ['선 스펙트럼', '불꽃 반응', '원소 확인', '방출 스펙트럼'] },
+  { id: 'chem-filter', lab: 'chem', kind: '안내', name: '깔때기·거름종이', src: [3],
+    keywords: ['거름', '앙금', '혼합물 분리', '재결정'] },
+  { id: 'chem-evap', lab: 'chem', kind: '안내', name: '증발 접시', src: [3],
+    keywords: ['증발', '결정', '재결정', '혼합물 분리'] },
+  { id: 'chem-tlc', lab: 'chem', kind: '안내', name: '박층 크로마토그래피(TLC) 판', src: [],
+    keywords: ['크로마토그래피', '혼합물 분리', '성분 분석', '잉크 분리'] },
+
+  // ───────── 물리 (물리실) ─────────
+  { id: 'phys-cart', lab: 'phys', kind: '안내', name: '역학 수레·레일', src: [5],
+    keywords: ['운동 법칙', '뉴턴 제2법칙', '가속도 법칙', '가속도', '운동량 보존', '충돌', '등가속도 운동'] },
+  { id: 'phys-pulley', lab: 'phys', kind: '안내', name: '도르래·추 세트', src: [5],
+    keywords: ['뉴턴 제2법칙', '힘과 가속도', '일과 에너지', '알짜힘'] },
+  { id: 'phys-photogate', lab: 'phys', kind: '안내', name: '포토게이트(광전 센서)', src: [5],
+    keywords: ['속도 측정', '가속도', '자유 낙하', '시간 측정', '등속 운동'] },
+  { id: 'phys-mbl', lab: 'phys', kind: '예약', name: '데이터 로거(MBL)', src: [5],
+    keywords: ['센서 측정', '운동 그래프', '온도 측정', '전압 측정', '힘 측정', '운동량 보존'] },
+  { id: 'phys-timer', lab: 'phys', kind: '안내', name: '시간 기록계(종이테이프 타이머)', src: [5],
+    keywords: ['등가속도 운동', '자유 낙하', '속도 변화', '운동 분석'] },
+  { id: 'phys-force', lab: 'phys', kind: '안내', name: '힘 센서·용수철저울', src: [5, 6],
+    keywords: ['힘 측정', '탄성력', '마찰력', '훅의 법칙', '알짜힘'] },
+  { id: 'phys-friction', lab: 'phys', kind: '안내', name: '마찰 실험 나무토막·빗면', src: [6],
+    keywords: ['마찰력', '마찰 계수', '빗면', '정지 마찰', '운동 마찰'] },
+  { id: 'phys-pendulum', lab: 'phys', kind: '안내', name: '진자 세트', src: [],
+    keywords: ['단진자', '주기', '중력 가속도', '역학적 에너지 보존'] },
+  { id: 'phys-power', lab: 'phys', kind: '안내', name: '직류 전원 장치', src: [7, 8],
+    keywords: ['옴의 법칙', '전기 회로', '저항', '전류', '전자석'] },
+  { id: 'phys-multimeter', lab: 'phys', kind: '안내', name: '멀티미터', src: [8],
+    keywords: ['전압 측정', '전류 측정', '저항 측정', '옴의 법칙', '전기 회로'] },
+  { id: 'phys-galvano', lab: 'phys', kind: '안내', name: '검류계', src: [],
+    keywords: ['전자기 유도', '유도 전류', '패러데이 법칙', '렌츠 법칙'] },
+  { id: 'phys-coil', lab: 'phys', kind: '안내', name: '코일·막대자석 세트', src: [],
+    keywords: ['전자기 유도', '자기장', '유도 기전력', '전자석', '솔레노이드'] },
+  { id: 'phys-magsensor', lab: 'phys', kind: '안내', name: '자기장 센서', src: [],
+    keywords: ['자기장 측정', '전류에 의한 자기장', '솔레노이드', '지구 자기장'] },
+  { id: 'phys-optics', lab: 'phys', kind: '안내', name: '광학대·렌즈 세트', src: [7],
+    keywords: ['렌즈', '초점 거리', '상의 위치', '빛의 굴절', '볼록 렌즈'] },
+  { id: 'phys-laser', lab: 'phys', kind: '안내', name: '레이저·이중 슬릿', src: [],
+    keywords: ['빛의 간섭', '회절', '파장 측정', '이중 슬릿', '빛의 파동성'] },
+  { id: 'phys-ripple', lab: 'phys', kind: '안내', name: '물결파 투영 장치', src: [],
+    keywords: ['물결파', '파동', '파동의 반사', '파동의 굴절', '파동의 간섭'] },
+  { id: 'phys-scope', lab: 'phys', kind: '예약', name: '오실로스코프', src: [],
+    keywords: ['소리 파형', '진동수', '교류', '파동', '신호 측정'] },
+  { id: 'phys-fork', lab: 'phys', kind: '안내', name: '소리굽쇠·공명 장치', src: [],
+    keywords: ['소리', '공명', '진동수', '정상파', '맥놀이'] },
+  { id: 'phys-semicon', lab: 'phys', kind: '안내', name: '다이오드·LED 실험 키트', src: [],
+    keywords: ['다이오드', 'LED', '반도체', '정류', '광전 효과'] },
+];
+
+module.exports = { SOURCES, ITEMS, NO_HOWTO_NOTICE: W };

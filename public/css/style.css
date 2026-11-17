@@ -1,0 +1,243 @@
+/* ─────────────────────────────────────────────
+   과학실 관리 앱 공통 모양
+   태블릿에서 손가락으로 누르기 쉽게 글씨와 버튼을 크게 만듭니다.
+   ───────────────────────────────────────────── */
+
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #1c2430;
+  --muted: #5b6573;
+  --line: #d6dce3;
+  --primary: #1f5fbf;      /* 파란 버튼 */
+  --primary-dark: #174a96;
+  --green: #1a7f37;        /* 사용 가능 */
+  --red: #c62828;          /* 사용 중, 연체, 오류 */
+  --yellow: #b7791f;       /* 예약 대기 */
+  --yellow-bg: #fff6dc;
+  --gray: #6b7280;         /* 점검 중 */
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-size: 22px;
+  line-height: 1.5;
+}
+
+main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
+
+h1 { font-size: 34px; margin: 8px 0 24px; text-align: center; }
+h2 { font-size: 28px; margin: 0 0 16px; }
+
+/* 버튼 */
+button, .btn {
+  font: inherit;
+  min-height: 64px;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  border: 2px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+button:active { transform: scale(0.98); }
+button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+button.primary { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: bold; }
+button.primary:hover:not(:disabled) { background: var(--primary-dark); }
+button.danger { background: var(--red); border-color: var(--red); color: #fff; }
+button.selected { border-color: var(--primary); background: #e6efff; font-weight: bold; }
+button.big { width: 100%; min-height: 140px; font-size: 36px; }
+
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.row > * { flex: 1 1 180px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+
+/* 입력 칸 */
+label { display: block; font-weight: bold; margin: 18px 0 8px; }
+input[type="text"], input[type="number"], input[type="search"], textarea {
+  font: inherit;
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 16px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+input:focus, textarea:focus { outline: 3px solid #9cc0ff; border-color: var(--primary); }
+input[type="checkbox"] { width: 32px; height: 32px; vertical-align: middle; margin-right: 10px; }
+
+/* 카드 */
+.card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px 0;
+}
+.card.clickable { cursor: pointer; }
+.card.clickable:active { background: #eef3fb; }
+.card.overdue { border-color: var(--red); background: #fdecec; }
+
+.big-name { font-size: 40px; font-weight: bold; }
+.muted { color: var(--muted); }
+.center { text-align: center; }
+
+/* 위험 등급 표시 */
+.badge { display: inline-block; padding: 2px 12px; border-radius: 999px; font-size: 18px; font-weight: bold; vertical-align: middle; }
+.badge.high { background: var(--red); color: #fff; }
+.badge.normal { background: #e3e8ee; color: var(--text); }
+.badge.warn { background: var(--yellow-bg); color: var(--yellow); }
+
+/* 기구 상태 4가지 (7-2): 초록 / 빨강 / 노랑 / 회색 */
+.status { display: inline-block; padding: 4px 16px; border-radius: 999px; font-weight: bold; color: #fff; }
+.status.ok { background: var(--green); }
+.status.busy { background: var(--red); }
+.status.reserved { background: #e0a800; color: #3d2c00; }
+.status.maint { background: var(--gray); }
+
+/* 기구 여러 대 고르기 버튼 */
+.unit-btn { min-height: 140px; }
+.unit-btn .big-label { font-size: 30px; font-weight: bold; margin-bottom: 8px; }
+
+/* 사용법 */
+.howto li { margin: 8px 0; }
+.sample-notice { background: var(--yellow-bg); color: #6b4a00; border-radius: 10px; padding: 10px 14px; font-weight: bold; margin: 0 0 12px -24px; }
+
+/* 처음 화면 기구 상태 줄 */
+.equip-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.mini-card { background: var(--card); border: 2px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; font-size: 18px; }
+.mini-card .mini-name { font-weight: bold; margin-bottom: 6px; }
+.mini-card .status { font-size: 16px; padding: 2px 10px; }
+
+.sound-btn { min-height: 52px; font-size: 18px; }
+
+/* 위험 기구 종료 안내 (화면 전체를 덮음) */
+.overlay[role="dialog"] { background: rgba(0, 0, 0, 0.7); }
+.overlay[role="dialog"] .overlay-box { border-color: var(--line); }
+.overlay { position: fixed; inset: 0; background: rgba(120, 0, 0, 0.88); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+.overlay-box { background: #fff; border-radius: 20px; padding: 32px 24px; max-width: 760px; text-align: center; border: 6px solid var(--red); }
+.overlay-title { font-size: 28px; font-weight: bold; margin-bottom: 16px; }
+.overlay-main { font-size: 40px; font-weight: bold; color: var(--red); margin-bottom: 16px; line-height: 1.3; }
+
+/* 기구 현황판 (/status) — 휴대폰에서 보기 좋게 */
+.status-page { font-size: 18px; }
+.status-page h1 { font-size: 26px; }
+.status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.status-card { background: var(--card); border: 2px solid var(--line); border-left-width: 10px; border-radius: 14px; padding: 14px 16px; }
+.status-card.s-ok { border-left-color: var(--green); }
+.status-card.s-busy { border-left-color: var(--red); }
+.status-card.s-reserved { border-left-color: #e0a800; }
+.status-card.s-maint { border-left-color: var(--gray); }
+.status-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.status-card .status { font-size: 15px; padding: 2px 10px; white-space: nowrap; }
+.status-card .remain { font-size: 26px; font-weight: bold; }
+.status-card .notice { background: var(--yellow-bg); color: #6b4a00; border-radius: 8px; padding: 6px 10px; margin-top: 6px; font-size: 16px; }
+.small { font-size: 15px; }
+.my-turn { background: #e6f6ea; border: 2px solid var(--green); border-radius: 10px; padding: 10px 12px; font-weight: bold; margin: 8px 0; }
+a { color: var(--primary); }
+
+/* 관리자 화면 — 컴퓨터에서 쓰니 글씨를 조금 작게 */
+.admin-page { font-size: 17px; }
+.admin-page main { max-width: 1200px; }
+.admin-page h1 { font-size: 26px; }
+.admin-page h2 { font-size: 21px; margin-top: 24px; }
+.admin-page button { min-height: 44px; padding: 6px 14px; border-radius: 10px; }
+.admin-page input[type="text"], .admin-page input[type="number"], .admin-page input[type="password"],
+.admin-page input[type="date"], .admin-page input[type="month"], .admin-page input[type="time"], .admin-page select, .admin-page textarea {
+  font: inherit; min-height: 44px; padding: 6px 10px; border: 2px solid var(--line); border-radius: 8px; width: 100%; background: #fff;
+}
+.admin-page label { margin: 12px 0 6px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }
+.tabs button.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.tile { background: var(--card); border: 2px solid var(--line); border-radius: 12px; padding: 12px; text-align: center; }
+.tile-n { font-size: 34px; font-weight: bold; }
+.tile.warn { border-color: #e0a800; background: var(--yellow-bg); }
+.tile.danger { border-color: var(--red); background: #fdecec; color: #8e1c1c; }
+.table-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+th { background: #eef2f6; white-space: nowrap; }
+tr.overdue-row td { background: #fdecec; color: #8e1c1c; font-weight: bold; }
+tr.unread-row td { background: #eef4ff; font-weight: bold; }
+.row-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.inline-input { width: 140px !important; min-height: 40px !important; }
+.ok-box { background: #e6f6ea; border: 2px solid var(--green); color: #14532d; border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+.opt-row { margin-bottom: 6px; }
+.check-list { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.check-item { display: inline-flex !important; align-items: center; margin: 2px 0 !important; font-weight: normal !important; }
+.check-item input[type="checkbox"] { width: 22px; height: 22px; margin-right: 6px; }
+code { background: #eef2f6; padding: 2px 6px; border-radius: 6px; }
+.filter .row > * { flex: 1 1 160px; }
+
+/* 카메라 화면 (9단계) */
+.scan-box { position: relative; background: #111; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 3; max-height: 60vh; margin: 0 auto; }
+.scan-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.scan-frame { position: absolute; inset: 12%; border: 4px dashed rgba(255, 255, 255, 0.8); border-radius: 12px; pointer-events: none; }
+.scan-status { text-align: center; font-weight: bold; font-size: 24px; margin: 12px 0 4px; min-height: 36px; }
+.practice-panel { background: var(--yellow-bg); border: 2px dashed #e0a800; border-radius: 14px; padding: 14px 16px; margin-top: 16px; font-size: 18px; }
+.practice-panel select { font: inherit; min-height: 48px; width: 100%; }
+.practice-panel input[type="range"] { width: 100%; }
+.cand-btn { width: 100%; text-align: left; font-size: 26px; }
+
+/* 기구 사진 */
+.equip-photo { display: block; width: 100%; max-height: 260px; object-fit: contain; border-radius: 12px; background: #f0f2f5; margin: 0 auto 12px; }
+.unit-photo { display: block; width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+.status-photo { display: block; width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+.photo-box .photo-preview { width: 260px; max-width: 100%; height: 180px; border: 2px dashed var(--line); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f7f9fb; margin-bottom: 8px; }
+.photo-box .photo-preview img { width: 100%; height: 100%; object-fit: contain; }
+img.thumb { width: 64px; height: 48px; object-fit: cover; border-radius: 6px; display: block; }
+
+/* 실험실 (13단계) */
+.lab-name { display: inline-block; margin-left: 12px; padding: 2px 14px; border-radius: 999px; background: #e6efff; color: var(--primary-dark); font-size: 22px; vertical-align: middle; }
+.lab-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); margin-top: 24px; }
+.link-btn { background: none; border: none; color: var(--muted); text-decoration: underline; min-height: 44px; font-size: 18px; }
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 16px; }
+.lab-tabs button { min-height: 44px; padding: 4px 16px; font-size: 17px; }
+.lab-tabs button.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* 안내 전용 기구 (14단계) */
+.status.guide { background: #e6efff; color: var(--primary-dark); }
+.check-before li { margin: 8px 0; }
+.caution-card { border-color: #f0b4b4; background: #fff7f7; }
+
+/* 주제로 추천 (16단계) */
+.rec-card { display: flex; gap: 14px; align-items: center; }
+.rec-photo { width: 84px; height: 64px; object-fit: cover; border-radius: 8px; flex: 0 0 auto; }
+
+/* 비밀번호 보이기 👁 버튼 */
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 58px !important; }
+.eye-btn { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); min-height: 40px !important; width: 48px; padding: 0 !important; border: none !important; background: transparent !important; font-size: 22px; cursor: pointer; }
+.eye-btn.on { opacity: 0.85; }
+.eye-btn:focus-visible { outline: 3px solid #9cc0ff; border-radius: 8px; }
+
+/* 오류·결과 안내 */
+.error { background: #fdecec; border: 2px solid var(--red); color: #8e1c1c; border-radius: 12px; padding: 14px 18px; margin: 16px 0; }
+.error .hint { color: var(--text); margin-top: 6px; }
+.result { text-align: center; padding: 32px 16px; }
+.result .icon { font-size: 80px; }
+.result.success .icon { color: var(--green); }
+.result.fail .icon { color: var(--red); }
+.countdown { color: var(--muted); margin-top: 24px; }
+
+/* 맨 위 경고 띠 (5단계에서 연결) */
+#alert-bar:empty { display: none; }
+#alert-bar { background: var(--red); color: #fff; padding: 12px 16px; font-weight: bold; text-align: center; }
+
+.top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.top-nav button { min-height: 52px; }
+
+@media (max-width: 600px) {
+  body { font-size: 19px; }
+  h1 { font-size: 28px; }
+  .big-name { font-size: 32px; }
+  button.big { min-height: 110px; font-size: 28px; }
+}
